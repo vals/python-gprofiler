@@ -21,6 +21,9 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     and the g:Cocoa (compact view of multiple queries) tool in case 'query' is a
     list. PNG output can fail (return FALSE) in case the input query is too large.
     In such case, it is advisable to fall back to a non-image request.
+
+    Returns a pandas DataFrame with enrichment results
+    
     '''
     query_url = ''
     my_url = BASE_URL + 'gcocoa.cgi'
