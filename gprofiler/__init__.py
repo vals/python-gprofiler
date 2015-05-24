@@ -24,6 +24,14 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     wantpng = True if png_fn else False
     output_type = 'mini_png' if wantpng else 'mini'
 
+    if wantpng:
+        raise NotImplementedError('PNG Output not implemented')
+        return
+
+    if include_graph:
+        raise NotImplementedError('Biogrid Interactions not implemented (include_graph)')
+        return
+
     # Query
 
     qnames = list(query)
