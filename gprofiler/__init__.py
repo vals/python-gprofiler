@@ -40,7 +40,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
         correction_method = 'analytical'
 
     if correction_method not in ('analytical', 'fdr', 'bonferroni'):
-        # TODO: Raise exception
+        raise ValueError("Multiple testing correction method not recognized (correction_method)")
         return
 
     # Hierarchical filtering
