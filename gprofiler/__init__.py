@@ -46,7 +46,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     # Hierarchical filtering
 
     if hier_filtering not in ('none', 'moderate', 'strong'):
-        # TODO: Raise exception
+        raise ValueError("hier_filtering must be one of \"none\", \"moderate\" or \"strong\"")
         return
 
     if hier_filtering == 'strong':
