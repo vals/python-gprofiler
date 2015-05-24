@@ -59,7 +59,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     # Domain size
 
     if domain_size not in ('annotated', 'known'):
-        # TODO: Raise exception
+        raise ValueError("domain_size must be one of \"annotated\" or \"known\"")
         return
 
     # Custom background
