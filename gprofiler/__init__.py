@@ -27,9 +27,12 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     # Query
 
     qnames = list(query)
-    query_url = ' '.join(qnames)
+    
+    if len(qnames) == 0:
+        raise ValueError('Missing query')
+        return
 
-    # TODO: Handle empty lists, non-names etc.
+    query_url = ' '.join(qnames)
 
     # Significance threshold
 
