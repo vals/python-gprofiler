@@ -1,3 +1,6 @@
+''' Python port of g:ProfileR, the R wrapper for the g:Profiler functional enrichment tool.
+'''
+
 import requests
 import pandas as pd
 
