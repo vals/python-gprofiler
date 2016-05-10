@@ -23,7 +23,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     In such case, it is advisable to fall back to a non-image request.
 
     Returns a pandas DataFrame with enrichment results
-    
+
     '''
     query_url = ''
     my_url = BASE_URL + 'gcocoa.cgi'
@@ -41,7 +41,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     # Query
 
     qnames = list(query)
-    
+
     if len(qnames) == 0:
         raise ValueError('Missing query')
         return
@@ -90,7 +90,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
         max_set_size = 0
 
     # HTTP request
-    
+
     query_params = {
         'organism': organism,
         'query': query_url,
@@ -121,10 +121,10 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     raw_query = requests.post(my_url, data=query_params, headers=HEADERS)
 
     # Here PNG request parsing would go, but not implementing that
-    
+
     if wantpng:
         pass
-    
+
     # Requested text
 
     split_query = raw_query.text.split('\n')
@@ -132,7 +132,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     commented_lines = filter(lambda s: s.startswith('#'), split_query)
 
     # Here interaction parsing would go, but not implementing that
-    
+
     if include_graph:
         pass
 
@@ -142,13 +142,18 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     split_query = filter(lambda s: not len(s) == 0, split_query)
     split_query = map(lambda s: s.split('\t'), split_query)
 
-    enrichment = pd.DataFrame(split_query)
+    enrichment = pd.DataFrame(list(split_query))
     enrichment.columns = ["query.number", "significant", "p.value", "term.size",
                           "query.size", "overlap.size", "recall", "precision",
                           "term.id", "domain", "subgraph.number", "term.name",
                           "relative.depth", "intersection"]
     enrichment.index = enrichment['term.id']
-    enrichment = enrichment.convert_objects(convert_numeric=True)
+    numeric_columns = ["query.number", "p.value", "term.size",
+                       "query.size", "overlap.size", "recall", "precision",
+                       "subgraph.number", "relative.depth"]
+    for column in numeric_columns:
+        enrichment[column] = pd.to_numeric(enrichment[column])
+
     enrichment['significant'] = enrichment['significant'] == '!'
 
     return enrichment
