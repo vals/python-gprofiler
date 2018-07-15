@@ -143,6 +143,8 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     split_query = map(lambda s: s.split('\t'), split_query)
 
     enrichment = pd.DataFrame(list(split_query))
+    if enrichment.empty: return None # handle no enrichment cases
+
     enrichment.columns = ["query.number", "significant", "p.value", "term.size",
                           "query.size", "overlap.size", "recall", "precision",
                           "term.id", "domain", "subgraph.number", "term.name",
