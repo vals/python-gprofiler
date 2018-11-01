@@ -141,7 +141,12 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     split_query = filter(lambda s: not s.startswith('#'), split_query)
     split_query = filter(lambda s: not len(s) == 0, split_query)
     split_query = map(lambda s: s.split('\t'), split_query)
+    print(split_query)
 
+    if (len(list(split_query))>0):
+        
+        enrichment = pd.DataFrame(list(split_query))
+        enrichment.columns = ["query.number", "significant", "p.value", "term.size",
     enrichment = pd.DataFrame(list(split_query))
     if enrichment.empty: return None # handle no enrichment cases
 
@@ -149,13 +154,16 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
                           "query.size", "overlap.size", "recall", "precision",
                           "term.id", "domain", "subgraph.number", "term.name",
                           "relative.depth", "intersection"]
-    enrichment.index = enrichment['term.id']
-    numeric_columns = ["query.number", "p.value", "term.size",
+        enrichment.index = enrichment['term.id']
+        numeric_columns = ["query.number", "p.value", "term.size",
                        "query.size", "overlap.size", "recall", "precision",
                        "subgraph.number", "relative.depth"]
-    for column in numeric_columns:
-        enrichment[column] = pd.to_numeric(enrichment[column])
+        for column in numeric_columns:
+            enrichment[column] = pd.to_numeric(enrichment[column])
 
-    enrichment['significant'] = enrichment['significant'] == '!'
+        enrichment['significant'] = enrichment['significant'] == '!'
+    else:
+        enrichment=list()
 
     return enrichment
+
