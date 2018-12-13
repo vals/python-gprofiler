@@ -21,7 +21,7 @@ Once the package is installed, here is an example of what to expect when running
 
 	In [2]: enrichment = gprofiler(['Klf4', 'Pax5', 'Sox2', 'Nanog'], organism='mmusculus')
 
-	In [3]: enrichment.sort('p.value').head()
+	In [3]: enrichment.sort_values('p.value').head()
 	Out[3]: 
 	            query.number significant   p.value  term.size  query.size  \
 	term.id                                                                 
