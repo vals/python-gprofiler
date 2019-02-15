@@ -22,7 +22,7 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
     list. PNG output can fail (return FALSE) in case the input query is too large.
     In such case, it is advisable to fall back to a non-image request.
 
-    Returns a pandas DataFrame with enrichment results
+    Returns a pandas DataFrame with enrichment results or None
 
     '''
     query_url = ''
@@ -42,9 +42,8 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
 
     qnames = list(query)
 
-    if len(qnames) == 0:
+    if not qnames:
         raise ValueError('Missing query')
-        return
 
     query_url = ' '.join(qnames)
 
@@ -55,13 +54,11 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
 
     if correction_method not in ('analytical', 'fdr', 'bonferroni'):
         raise ValueError("Multiple testing correction method not recognized (correction_method)")
-        return
 
     # Hierarchical filtering
 
     if hier_filtering not in ('none', 'moderate', 'strong'):
         raise ValueError("hier_filtering must be one of \"none\", \"moderate\" or \"strong\"")
-        return
 
     if hier_filtering == 'strong':
         hier_filtering = 'compact_ccomp'
@@ -74,15 +71,13 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
 
     if domain_size not in ('annotated', 'known'):
         raise ValueError("domain_size must be one of \"annotated\" or \"known\"")
-        return
 
     # Custom background
 
-    if type(custom_bg) == list:
+    if isinstance(custom_bg, list):
         custom_bg = ' '.join(custom_bg)
     else:
         raise TypeError('custom_bg need to be a list')
-        return
 
     # Max. set size
 
@@ -129,8 +124,6 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
 
     split_query = raw_query.text.split('\n')
 
-    commented_lines = filter(lambda s: s.startswith('#'), split_query)
-
     # Here interaction parsing would go, but not implementing that
 
     if include_graph:
@@ -138,12 +131,14 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
 
     # Parse main result body
 
-    split_query = filter(lambda s: not s.startswith('#'), split_query)
-    split_query = filter(lambda s: not len(s) == 0, split_query)
-    split_query = map(lambda s: s.split('\t'), split_query)
+    split_query = [
+        s.split('\t')
+        for s in split_query
+        if s and not s.startswith('#')
+    ]
         
-    enrichment = pd.DataFrame(list(split_query))
-    if (enrichment.shape[1]>0):
+    enrichment = pd.DataFrame(split_query)
+    if enrichment.shape[1] > 0:
         enrichment.columns = ["query.number", "significant", "p.value", "term.size",
                           "query.size", "overlap.size", "recall", "precision",
                           "term.id", "domain", "subgraph.number", "term.name",
@@ -157,7 +152,6 @@ def gprofiler(query, organism='hsapiens', ordered_query=False, significant=True,
 
         enrichment['significant'] = enrichment['significant'] == '!'
     else:
-        enrichment=list()
+        enrichment = None
 
     return enrichment
-
